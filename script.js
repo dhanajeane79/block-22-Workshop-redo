@@ -1,4 +1,5 @@
 const newPartyForm = document.querySelector('#new-party-form');
+const partyListContainer = document.querySelector('#party-list-container');
 const partyContainer = document.querySelector('#party-container');
 
 const PARTIES_API_URL =
@@ -12,6 +13,7 @@ const GIFTS_API_URL = 'http://fsa-async-await.herokuapp.com/api/workshop/gifts';
 const getAllParties = async () => {
   try {
     const response = await fetch(PARTIES_API_URL);
+    console.log(response);
     const parties = await response.json();
     return parties;
   } catch (error) {
@@ -32,7 +34,18 @@ const getPartyById = async (id) => {
 
 // delete party
 const deleteParty = async (id) => {
-  // your code here
+   // send a DELETE api call by id
+   console.log('deleting ' + id);
+  try {
+    const requestOptions = {
+      method: 'DELETE'
+    }
+    const response = await fetch(`${PARTIES_API_URL}/${id}`, requestOptions);
+    const party = await response.json();
+    return party;
+  } catch (error) {
+	console.error(error);
+  }  
 };
 
 // render a single party by id
@@ -113,7 +126,10 @@ const renderParties = async (parties) => {
       // see details
       const detailsButton = partyElement.querySelector('.details-button');
       detailsButton.addEventListener('click', async (event) => {
-        // your code here
+		// get the id
+        const partyId = event.target.dataset.id
+        // send id to renderSinglePartyById function
+        renderSinglePartyById(partyId)
       });
 
       // delete party
@@ -129,7 +145,9 @@ const renderParties = async (parties) => {
 
 // init function
 const init = async () => {
-  // your code here
+  const parties = await getAllParties()
+  // console.log(parties);
+  renderParties(parties) // <- put parties in here as an argument
 };
 
 init();
